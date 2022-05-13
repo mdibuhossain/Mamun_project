@@ -26,14 +26,15 @@ typedef struct Medicine
 Medicine m[100];
 FILE *medicineData = NULL;
 
-void openFile(char mode[]);
+void openFile(char[]);
 void closeFile();
-void SellMedicine(int number);
-void EnterInfoAboutMedicine(int number);
-void StockOfMedicine(int number);
-void KnowInfoAboutMedicine(int number);
-void AddMedicineinStore(int number, struct Medicine m[]);
-void DeleteMedicineStore(int number);
+void dataDisplayInterface(Medicine);
+void SellMedicine(int);
+void EnterInfoAboutMedicine(int);
+void StockOfMedicine(int);
+void KnowInfoAboutMedicine(int);
+void AddMedicineinStore(int, struct Medicine m[]);
+void DeleteMedicineStore(int);
 int main()
 {
     system("Color B4");
@@ -102,6 +103,24 @@ void openFile(char mode[])
 void closeFile()
 {
     fclose(medicineData);
+}
+void dataDisplayInterface(Medicine tmpData)
+{
+    printf("%-20s= %d\n", "Id", tmpData.id);
+    printf("%-20s= %s\n", "Medicine name", tmpData.medicneName);
+    printf("%-20s= %d\n", "Price", tmpData.price);
+    printf("%-20s= %d\n", "Available Quantity", tmpData.quantity);
+    printf("%-20s= %s\n", "Company", tmpData.Company);
+    printf("%-20s= %s\n", "Mfg Date", tmpData.Mfg_Date);
+    printf("%-20s= %s\n", "Exp Date", tmpData.Exp_Date);
+    if (strcmp(tmpData.info, "") != 0)
+    {
+        printf("%-20s= %s\n", "Review or Info", tmpData.info);
+    }
+    else
+    {
+        printf("%-20s= Not Available\n", "Review or Info");
+    }
 }
 void SellMedicine(int number)
 {
@@ -245,60 +264,44 @@ void EnterInfoAboutMedicine(int number)
 }
 void KnowInfoAboutMedicine(int number)
 {
+    openFile("rb");
+    Medicine tmpM;
     int i, flag = 0;
-    char name[100];
+    char name[MAX_SIZEOF_MEDICINE];
     printf("Enter Name of the medicine you want to see Review and Info\n");
     fflush(stdin);
     gets(name);
-    for (i = 0; i < number; i++)
+    while (fread(&tmpM, sizeof(Medicine), 1, medicineData) == 1)
     {
-        if (strcmp(m[i].medicneName, name) == 0)
+        if (strcmp(tmpM.medicneName, name) == 0)
         {
             flag = 1;
             printf("These are the details of Medicine\n");
-            printf("Name=%s\nPrice=%d\nAvailable Quantity=%d\nCompany=%s\nMfg Date=%s\nExp Date=%s\n", m[i].medicneName, m[i].price, m[i].quantity, m[i].Company, m[i].Mfg_Date, m[i].Exp_Date);
-            if (strcmp(m[i].info, "") != 0)
-            {
-                printf("Review or Info=%s\n", m[i].info);
-            }
-            else
-            {
-                printf("Review or Info = Not Available\n");
-            }
+            dataDisplayInterface(tmpM);
         }
     }
     if (flag == 0)
     {
         printf("Entered Name Not Found\n");
     }
+    closeFile();
 }
 void StockOfMedicine(int number)
 {
     openFile("rb");
     Medicine tmpData;
-    int i;
+    int item = 0;
     if (medicineData != NULL)
     {
         printf("All Available Items are\n");
         while (fread(&tmpData, sizeof(Medicine), 1, medicineData) == 1)
         {
             puts("--------------------------------------------");
-            printf("%-20s= %d\n", "Id", tmpData.id);
-            printf("%-20s= %s\n", "Medicine name", tmpData.medicneName);
-            printf("%-20s= %d\n", "Price", tmpData.price);
-            printf("%-20s= %d\n", "Available Quantity", tmpData.quantity);
-            printf("%-20s= %s\n", "Company", tmpData.Company);
-            printf("%-20s= %s\n", "Mfg Date", tmpData.Mfg_Date);
-            printf("%-20s= %s\n", "Exp Date", tmpData.Exp_Date);
-            if (strcmp(tmpData.info, "") != 0)
-            {
-                printf("%-20s= %s\n", "Review or Info", tmpData.info);
-            }
-            else
-            {
-                printf("%-20s= Not Available\n", "Review or Info");
-            }
+            dataDisplayInterface(tmpData);
+            item++;
         }
+        if (!item)
+            printf("No Items/Medicines Available\n");
     }
     else
     {
