@@ -186,10 +186,10 @@ void SellMedicine(int number)
                 openFile("wb");
                 for (i = 0; i < index; i++)
                 {
-                    if (tmpMed[index].id == id)
+                    if (tmpMed[i].id == id)
                         fwrite(&medData, sizeof(Medicine), 1, medicineData);
                     else
-                        fwrite(&tmpMed[index], sizeof(Medicine), 1, medicineData);
+                        fwrite(&tmpMed[i], sizeof(Medicine), 1, medicineData);
                 }
                 closeFile();
                 free(tmpMed);
