@@ -124,99 +124,145 @@ void dataDisplayInterface(Medicine tmpData)
 }
 void SellMedicine(int number)
 {
-    int id, check, i, quantity, flag = 0;
-    char name[100];
+    int check, i, quantity, flag = 0;
     printf("Enter 1 if you know ID else any other number to enter Name of Medicine\n");
     fflush(stdin);
     scanf("%d", &check);
     if (check == 1)
     {
+        int id;
+        Medicine medData;
         printf("Enter Id to Sell Medicine\n");
         fflush(stdin);
         scanf("%d", &id);
-        for (i = 0; i < number; i++)
+
+        openFile("rb");
+        while (fread(&medData, sizeof(Medicine), 1, medicineData) == 1)
         {
-            if (m[i].id == id)
+            if (medData.id == id)
             {
                 flag = 1;
-                int c;
-                printf("These are the details of Medicine\n");
-                printf("Name%s\nPrice=%d\nAvailable Quantity=%d\nCompany=%s\nMfg Date=%s\nExp Date=%s\n", m[i].medicneName, m[i].price, m[i].quantity, m[i].Company, m[i].Mfg_Date, m[i].Exp_Date);
-                if (strcmp(m[i].info, "") == 0)
-                {
-                    printf("Medicine Review/Info=Not Available\n");
-                }
-                else
-                {
-                    printf("Medicine Review/Info=%s\n", m[i].info);
-                }
-                printf("Do you want to Sell %s \nIf Yes Enter 1 else any other number\n", m[i].medicneName);
-                fflush(stdin);
-                scanf("%d", &c);
-                if (c == 1)
-                {
-                    printf("Enter Quantity to Sell\n");
-                    scanf("%d", &quantity);
-                    if (m[i].quantity > quantity)
-                    {
-                        printf("Total Price to be paid=%d\n", quantity * m[i].price);
-                    }
-                    else
-                    {
-                        printf("Please Enter quantity below Available Quantity\n");
-                    }
-                }
                 break;
             }
         }
+        closeFile();
+
         if (flag == 0)
         {
             printf("Entered Id Not Found\n");
         }
-    }
-    else
-    {
-        printf("Enter Name to search and Sell\n");
-        fflush(stdin);
-        gets(name);
-        for (i = 0; i < number; i++)
+        else
         {
-            if (strcmp(m[i].medicneName, name) == 0)
+            int c;
+            printf("These are the details of Medicine\n");
+            dataDisplayInterface(medData);
+            printf("Do you want to Sell %s \nIf Yes Enter 1 else any other number\n", medData.medicneName);
+            fflush(stdin);
+            scanf("%d", &c);
+            if (c == 1)
             {
-                flag = 1;
-                int c;
-                printf("These are the details of Medicine\n");
-                printf("Name=%s\nPrice=%d\nAvailable Quantity=%d\nCompany=%s\nMfg Date=%s\nExp Date=%s\n", m[i].medicneName, m[i].price, m[i].quantity, m[i].Company, m[i].Mfg_Date, m[i].Exp_Date);
-                if (strcmp(m[i].info, "") == 0)
+                printf("Enter Quantity to Sell\n");
+                scanf("%d", &quantity);
+                if (medData.quantity > quantity)
                 {
-                    printf("Medicine Review/Info=Not Available\n");
+                    printf("Total Price to be paid=%d\n", quantity * medData.price);
+                    medData.quantity -= quantity;
                 }
                 else
                 {
-                    printf("Medicine Review/Info=%s\n", m[i].info);
+                    printf("Please Enter quantity below Available Quantity\n");
                 }
-                printf("Do you want to Sell %s \nIf Yes Enter 1 else any other number\n", m[i].medicneName);
-                fflush(stdin);
-                scanf("%d", &c);
-                if (c == 1)
+
+                openFile("rb");
+                int index = 0;
+                Medicine *tmpMed = (Medicine *)calloc(1, sizeof(Medicine));
+                while (fread(&tmpMed[index], sizeof(Medicine), 1, medicineData) == 1)
                 {
-                    printf("Enter Quantity to Sell\n");
-                    scanf("%d", &quantity);
-                    if (m[i].quantity > quantity)
-                    {
-                        printf("Total Price to be paid=%d\n", quantity * m[i].price);
-                    }
-                    else
-                    {
-                        printf("Please Enter quantity below Available Quantity\n");
-                    }
+                    tmpMed = (Medicine *)realloc(tmpMed, (index + 2) * sizeof(Medicine));
+                    index++;
                 }
+                closeFile();
+
+                openFile("wb");
+                for (i = 0; i < index; i++)
+                {
+                    if (tmpMed[index].id == id)
+                        fwrite(&medData, sizeof(Medicine), 1, medicineData);
+                    else
+                        fwrite(&tmpMed[index], sizeof(Medicine), 1, medicineData);
+                }
+                closeFile();
+                free(tmpMed);
+            }
+        }
+    }
+    else
+    {
+        char name[MAX_SIZEOF_MEDICINE];
+        Medicine medData;
+        printf("Enter Name to search and Sell\n");
+        fflush(stdin);
+        gets(name);
+
+        openFile("rb");
+        while (fread(&medData, sizeof(Medicine), 1, medicineData) == 1)
+        {
+            if (strcmp(medData.medicneName, name) == 0)
+            {
+                flag = 1;
                 break;
             }
         }
+        closeFile();
+
         if (flag == 0)
         {
-            printf("Entered Name of MEdicine Not Found\n");
+            printf("Entered Id Not Found\n");
+        }
+        else
+        {
+            int c;
+            printf("These are the details of Medicine\n");
+            dataDisplayInterface(medData);
+            printf("Do you want to Sell %s \nIf Yes Enter 1 else any other number\n", medData.medicneName);
+            fflush(stdin);
+            scanf("%d", &c);
+            if (c == 1)
+            {
+                printf("Enter Quantity to Sell\n");
+                scanf("%d", &quantity);
+                if (medData.quantity > quantity)
+                {
+                    printf("Total Price to be paid=%d\n", quantity * medData.price);
+                    medData.quantity -= quantity;
+                }
+                else
+                {
+                    printf("Please Enter quantity below Available Quantity\n");
+                }
+
+                openFile("rb");
+                int index = 0;
+                Medicine *tmpMed = (Medicine *)calloc(1, sizeof(Medicine));
+                while (fread(&tmpMed[index], sizeof(Medicine), 1, medicineData) == 1)
+                {
+                    tmpMed = (Medicine *)realloc(tmpMed, (index + 2) * sizeof(Medicine));
+                    index++;
+                }
+                closeFile();
+
+                openFile("wb");
+                for (i = 0; i < index; i++)
+                {
+
+                    if (strcmp(tmpMed[index].medicneName, name) == 0)
+                        fwrite(&medData, sizeof(Medicine), 1, medicineData);
+                    else
+                        fwrite(&tmpMed[index], sizeof(Medicine), 1, medicineData);
+                }
+                closeFile();
+                free(tmpMed);
+            }
         }
     }
 }
@@ -372,4 +418,5 @@ void DeleteMedicineStore(int number)
         printf("Medicine with %d is Deleted Successfully\n", id);
     }
     closeFile();
+    free(allMedicines);
 }
