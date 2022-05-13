@@ -29,17 +29,17 @@ FILE *medicineData = NULL;
 void openFile(char[]);
 void closeFile();
 void dataDisplayInterface(Medicine);
-void SellMedicine(int);
-void EnterInfoAboutMedicine(int);
-void StockOfMedicine(int);
-void KnowInfoAboutMedicine(int);
-void AddMedicineinStore(int, struct Medicine m[]);
-void DeleteMedicineStore(int);
+void SellMedicine();
+void EnterInfoAboutMedicine();
+void StockOfMedicine();
+void KnowInfoAboutMedicine();
+void AddMedicineinStore();
+void DeleteMedicineStore();
 int main()
 {
     system("Color B4");
 
-    int i, j, number = 0, c;
+    int i, j, c;
     char choice[50];
     do
     {
@@ -61,33 +61,32 @@ int main()
 
         case 49:
         {
-            SellMedicine(number + 1);
+            SellMedicine();
             break;
         }
         case 50:
         {
-            EnterInfoAboutMedicine(number + 1);
+            EnterInfoAboutMedicine();
             break;
         }
         case 51:
         {
-            StockOfMedicine(number + 1);
+            StockOfMedicine();
             break;
         }
         case 52:
         {
-            KnowInfoAboutMedicine(number + 1);
+            KnowInfoAboutMedicine();
             break;
         }
         case 53:
         {
-            ++number;
-            AddMedicineinStore(number, m);
+            AddMedicineinStore();
             break;
         }
         case 54:
         {
-            DeleteMedicineStore(number + 1);
+            DeleteMedicineStore();
             break;
         }
         }
@@ -122,7 +121,7 @@ void dataDisplayInterface(Medicine tmpData)
         printf("%-20s= Not Available\n", "Review or Info");
     }
 }
-void SellMedicine(int number)
+void SellMedicine()
 {
     int check, i, quantity, flag = 0;
     printf("Enter 1 if you know ID else any other number to enter Name of Medicine\n");
@@ -267,14 +266,14 @@ void SellMedicine(int number)
     }
 }
 
-void EnterInfoAboutMedicine(int number)
+void EnterInfoAboutMedicine()
 {
     int i, flag = 0, c;
     char name[100], info[100];
     printf("Enter Name of the medicine you want to Review or include Info\n");
     fflush(stdin);
     gets(name);
-    for (i = 0; i < number; i++)
+    for (i = 0; i < 5; i++)
     {
         if (strcmp(m[i].medicneName, name) == 0)
         {
@@ -308,7 +307,7 @@ void EnterInfoAboutMedicine(int number)
         printf("Entered Name of Medicine Not Found\n");
     }
 }
-void KnowInfoAboutMedicine(int number)
+void KnowInfoAboutMedicine()
 {
     openFile("rb");
     Medicine tmpM;
@@ -332,7 +331,7 @@ void KnowInfoAboutMedicine(int number)
     }
     closeFile();
 }
-void StockOfMedicine(int number)
+void StockOfMedicine()
 {
     openFile("rb");
     Medicine tmpData;
@@ -355,40 +354,41 @@ void StockOfMedicine(int number)
     }
     closeFile();
 }
-void AddMedicineinStore(int number, struct Medicine m[])
+void AddMedicineinStore()
 {
     openFile("ab");
+    Medicine med;
     if (medicineData != NULL)
     {
         printf("Enter Medicine Id\n");
-        scanf("%d", &(m[number].id));
+        scanf("%d", &med.id);
         fflush(stdin);
         printf("Enter Medicine Name\n");
         fflush(stdin);
-        gets(m[number].medicneName);
+        gets(med.medicneName);
         printf("Enter Company Name\n");
         fflush(stdin);
-        gets(m[number].Company);
+        gets(med.Company);
         printf("Enter Manufactured Date\n");
         fflush(stdin);
-        gets(m[number].Mfg_Date);
+        gets(med.Mfg_Date);
         printf("Enter Expiry Date\n");
         fflush(stdin);
-        gets(m[number].Exp_Date);
+        gets(med.Exp_Date);
         printf("Enter Quantity\n");
         fflush(stdin);
-        scanf("%d", &(m[number].quantity));
+        scanf("%d", &(med.quantity));
         printf("Enter Selling Price\n");
         fflush(stdin);
-        scanf("%d", &(m[number].price));
-        strcpy(m[number].info, "");
-        printf("Medicine with id %d Added Successfully\n", m[number].id);
-        fwrite(&m[number], sizeof(Medicine), 1, medicineData);
+        scanf("%d", &(med.price));
+        strcpy(med.info, "");
+        printf("Medicine with id %d Added Successfully\n", med.id);
+        fwrite(&med, sizeof(Medicine), 1, medicineData);
     }
     closeFile();
 }
 
-void DeleteMedicineStore(int number)
+void DeleteMedicineStore()
 {
     int index = 0;
     int i = 0;
