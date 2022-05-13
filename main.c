@@ -344,29 +344,32 @@ void AddMedicineinStore(int number, struct Medicine m[])
 
 void DeleteMedicineStore(int number)
 {
-    int id, i, flag = 0, num;
+    int index = 0;
+    int i = 0;
+    Medicine *allMedicines = (Medicine *)calloc(1, sizeof(Medicine));
+    openFile("rb");
+    while (fread(&allMedicines[index], sizeof(Medicine), 1, medicineData) == 1)
+    {
+        allMedicines = (Medicine *)realloc(allMedicines, (index + 2) * sizeof(Medicine));
+        index++;
+    }
+    closeFile();
+
+    int id, flag = 0, num;
     printf("Enter Id to be deleted\n");
     fflush(stdin);
     scanf("%d", &id);
-    for (i = 0; i < number; i++)
+    openFile("wb");
+    for (i = 0; i < index; i++)
     {
-        if (m[i].id == id)
-        {
+        if (id == allMedicines[i].id)
             flag = 1;
-            m[i].id = 0;
-            m[i].price = 0;
-            m[i].quantity = 0;
-            strcpy(m[i].medicneName, "");
-            strcpy(m[i].Company, "");
-            strcpy(m[i].Mfg_Date, "");
-            strcpy(m[i].Exp_Date, "");
-            strcpy(m[i].info, "");
-            num = i;
-            break;
-        }
+        else
+            fwrite(&allMedicines[i], sizeof(Medicine), 1, medicineData);
     }
     if (flag == 1)
     {
         printf("Medicine with %d is Deleted Successfully\n", id);
     }
+    closeFile();
 }
