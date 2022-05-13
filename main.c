@@ -23,7 +23,6 @@ typedef struct Medicine
     char info[MAX_SIZEOF_INFO];
 } Medicine;
 
-Medicine m[100];
 FILE *medicineData = NULL;
 
 void openFile(char[]);
