@@ -14,7 +14,7 @@
 typedef struct Medicine
 {
     int id;
-    int price;
+    float price;
     int quantity;
     char medicneName[MAX_SIZEOF_MEDICINE];
     char Company[MAX_SIZEOF_COMPANY];
@@ -34,63 +34,64 @@ void StockOfMedicine();
 void KnowInfoAboutMedicine();
 void AddMedicineinStore();
 void DeleteMedicineStore();
+
+void mainMenu()
+{
+    system("cls");
+    printf("**************************** WElCOME TO OUR STORE ************************");
+    printf("\n******************************************************************************");
+
+    printf("\n\t1.Sell Medicine\n\t2.Give a Information about this Medicine\n\t3.Stock information of all Medicine\n\t4.A specific Medicine Information\n\t5.Add New Medicine \n\t6.Delete any Medicine\n");
+    printf("\n     What do you Want?Press any option: ");
+}
 int main()
 {
     system("Color B4");
 
     int i, j, c;
-    char choice[50];
+    int choice;
     do
     {
         system("cls");
-        printf("**************************** WElCOME TO OUR STORE ************************");
-        printf("\n******************************************************************************");
-        printf("\n\nWhat do you Want?Press any option:\n");
+        fflush(stdin);
 
-        printf("\n\t1.Sell Medicine\n\t2.Give a Information about this Medicine\n\t3.Stock information of all Medicine\n\t4.A specific Medicine Information\n\t5.Add New Medicine \n\t6.Delete any Medicine\n");
-
-        gets(choice);
-        while (choice[0] != 49 && choice[0] != 50 && choice[0] != 51 && choice[0] != 52 && choice[0] != 53 && choice[0] != 54)
+        while (1)
         {
-            printf("Please Enter a Valid(1-6) Value: ");
-            gets(choice);
-        }
-        switch (choice[0])
-        {
-
-        case 49:
-        {
-            SellMedicine();
-            break;
-        }
-        case 50:
-        {
-            EnterInfoAboutMedicine();
-            break;
-        }
-        case 51:
-        {
-            StockOfMedicine();
-            break;
-        }
-        case 52:
-        {
-            KnowInfoAboutMedicine();
-            break;
-        }
-        case 53:
-        {
-            AddMedicineinStore();
-            break;
-        }
-        case 54:
-        {
-            DeleteMedicineStore();
-            break;
-        }
+            mainMenu();
+            scanf("%d", &choice);
+            switch (choice)
+            {
+            case 1:
+                system("cls");
+                SellMedicine();
+                break;
+            case 2:
+                system("cls");
+                EnterInfoAboutMedicine();
+                break;
+            case 3:
+                system("cls");
+                StockOfMedicine();
+                break;
+            case 4:
+                system("cls");
+                KnowInfoAboutMedicine();
+                break;
+            case 5:
+                system("cls");
+                AddMedicineinStore();
+                break;
+            case 6:
+                system("cls");
+                DeleteMedicineStore();
+                break;
+            default:
+                printf("Please Enter a Valid(1-6)");
+                Sleep(1000);
+            }
         }
 
-        printf("To Get Back in Main option press '0' Else any other number\n");
+        printf("To Get Back in Main option press '0' OR Exit Press any other number\n");
         scanf("%d", &c);
     } while (c == 0);
 }
@@ -106,7 +107,7 @@ void dataDisplayInterface(Medicine tmpData)
 {
     printf("%-20s= %d\n", "Id", tmpData.id);
     printf("%-20s= %s\n", "Medicine name", tmpData.medicneName);
-    printf("%-20s= %d\n", "Price", tmpData.price);
+    printf("%-20s= %0.2f\n", "Price", tmpData.price);
     printf("%-20s= %d\n", "Available Quantity", tmpData.quantity);
     printf("%-20s= %s\n", "Company", tmpData.Company);
     printf("%-20s= %s\n", "Mfg Date", tmpData.Mfg_Date);
@@ -163,7 +164,7 @@ void SellMedicine()
                 scanf("%d", &quantity);
                 if (medData.quantity > quantity)
                 {
-                    printf("Total Price to be paid=%d\n", quantity * medData.price);
+                    printf("Total Price to be paid=%0.2f\n", quantity * medData.price);
                     medData.quantity -= quantity;
                 }
                 else
@@ -231,7 +232,7 @@ void SellMedicine()
                 scanf("%d", &quantity);
                 if (medData.quantity > quantity)
                 {
-                    printf("Total Price to be paid=%d\n", quantity * medData.price);
+                    printf("Total Price to be paid=%0.2f\n", quantity * medData.price);
                     medData.quantity -= quantity;
                 }
                 else
@@ -263,6 +264,10 @@ void SellMedicine()
             }
         }
     }
+    puts("");
+    puts("");
+    puts("");
+    system("pause");
 }
 
 void reWriteInfo(Medicine med)
@@ -294,7 +299,16 @@ void EnterInfoAboutMedicine()
 {
     int i, flag = 0, c;
     char name[MAX_SIZEOF_MEDICINE], info[MAX_SIZEOF_INFO];
-    Medicine medData;
+    Medicine medData, displayMed;
+
+    openFile("rb");
+    while (fread(&displayMed, sizeof(Medicine), 1, medicineData) == 1)
+    {
+        dataDisplayInterface(displayMed);
+        puts("----------------------------------------------");
+    }
+    closeFile();
+
     printf("Enter Name of the medicine you want to Review or include Info\n");
     fflush(stdin);
     gets(name);
@@ -339,6 +353,10 @@ void EnterInfoAboutMedicine()
             reWriteInfo(medData);
         }
     }
+    puts("");
+    puts("");
+    puts("");
+    system("pause");
 }
 void KnowInfoAboutMedicine()
 {
@@ -363,6 +381,10 @@ void KnowInfoAboutMedicine()
         printf("Entered Name Not Found\n");
     }
     closeFile();
+    puts("");
+    puts("");
+    puts("");
+    system("pause");
 }
 void StockOfMedicine()
 {
@@ -385,6 +407,10 @@ void StockOfMedicine()
     {
         printf("No Items/Medicines Available\n");
     }
+    puts("");
+    puts("");
+    puts("");
+    system("pause");
     closeFile();
 }
 void AddMedicineinStore()
@@ -413,16 +439,29 @@ void AddMedicineinStore()
         scanf("%d", &(med.quantity));
         printf("Enter Selling Price\n");
         fflush(stdin);
-        scanf("%d", &(med.price));
+        scanf("%0.2f", &(med.price));
         strcpy(med.info, "");
         printf("Medicine with id %d Added Successfully\n", med.id);
         fwrite(&med, sizeof(Medicine), 1, medicineData);
     }
     closeFile();
+    puts("");
+    puts("");
+    puts("");
+    system("pause");
 }
 
 void DeleteMedicineStore()
 {
+    Medicine displayMed;
+    openFile("rb");
+    while (fread(&displayMed, sizeof(Medicine), 1, medicineData) == 1)
+    {
+        dataDisplayInterface(displayMed);
+        puts("----------------------------------------------");
+    }
+    closeFile();
+
     int index = 0;
     int i = 0;
     Medicine *allMedicines = (Medicine *)calloc(1, sizeof(Medicine));
@@ -448,7 +487,9 @@ void DeleteMedicineStore()
     }
     if (flag == 1)
     {
+        system("cls");
         printf("Medicine with %d is Deleted Successfully\n", id);
+        Sleep(1000);
     }
     closeFile();
     free(allMedicines);
